@@ -1,0 +1,172 @@
+*{
+    font-family: aealarabiya;
+    /*text-align: right;*/
+}
+
+page
+{
+    position: relative;
+}
+
+table{
+    border: 1px solid;
+    width: 100%;
+}
+
+table td{
+    border-top: 1px solid;
+    padding: 2mm;
+    text-align: center;
+}
+
+table td:nth-child(odd){
+    background-color: #919693;
+}
+
+table th{
+    border-bottom: 1px solid;
+    padding: 3mm;
+    text-align: center;
+}
+
+table .ref
+{
+    width: 10%;
+}
+
+table .desing
+{
+    width: 30%;
+}
+
+table .category
+{
+    width: 20%;
+}
+
+table .supplier
+{
+    width: 25%;
+}
+
+table .tva
+{
+    width: 5%;
+}
+
+table .unit
+{
+    width: 5%;
+}
+
+table .category-id
+{
+    width: 30%;
+}
+
+table .category-name
+{
+    width: 70%;
+}
+
+table .num
+{
+    width: 10%;
+    color: #222222;
+}
+
+table .fname
+{
+   width: 30%;
+}
+
+table .function
+{
+    width: 20%;
+}
+
+table .role
+{
+    width: 20%;
+}
+
+table .phone
+{
+    direction: ltr;
+    width: 20%;
+}
+
+.table-article-info
+{
+    border: 0;
+}
+
+.table-article-info td
+{
+    border: 0;
+    padding: 3mm;
+}
+
+.table-article-info .td-lable
+{
+    width: 30%;
+}
+
+.table-article-info .td-info
+{
+    width: 70%;
+}
+
+.table-article-infos ,.table-article-infos tr
+{
+    width: 100%;
+    border: 0;
+}
+
+.table-article-infos  td
+{
+    width: 50%;
+    border: 0;
+}
+
+
+/* Start Price Request Clients Style Page */
+
+.pr-main-header
+{
+    width: 100%;
+    position: relative;
+}
+
+.clt-side , .pr-side
+{
+    width: 50%;
+    height: 90mm;
+    padding: 3mm;
+}
+
+.pr-side
+{
+    background-color: rgba(27, 109, 133, 0);
+    position: absolute;
+}
+
+.clt-side
+{
+    background-color: #850510;
+    position: absolute;
+    color: #fff;
+    left: 50%;
+}
+
+.pr-header
+{
+    /*text-align: center !important;*/
+    /*background-color: aqua;*/
+    /*position:absolute;*/
+    font-size: 6mm;
+    color: #fff;
+    z-index: 12344;
+}
+
+/* End Price Request Clients Style Page */

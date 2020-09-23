@@ -1,0 +1,115 @@
+body
+{
+    background-color: #fff;
+    font-weight: normal;
+}
+
+
+.bill{
+    /*background-color: #1b6d85;*/
+    width: 400px;
+    margin-top: 2px;
+    /*float: right;*/
+}
+
+.print-header{
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.print-header h3{
+    margin: 5px;
+    font-size: 20px;
+}
+
+.print-header :first-child{
+    margin: 0px;
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+.img-header{
+    height: 70px;
+    width: 70px;
+    padding: 0;
+    margin: 0px;
+    margin-top: 4px;
+    margin-bottom: 2px;
+}
+
+.wrapper{
+    padding: 5px;
+    padding-bottom: 20px;
+}
+
+.data{
+    width: 100%;
+    padding: 0 1px 10px 2px;
+    border: 1px solid gray ;
+    border-collapse: collapse;
+    z-index: 123477;
+}
+
+th{
+    font-weight: unset;
+    text-align: center;
+    border-bottom: 1px solid #000000;
+}
+
+.table{
+    margin: 20px 1px;
+    border: 0.5px solid gray !important;
+}
+
+.table thead tr{
+    background-image: url('../img//logo/bg_print.PNG') ;
+    background-color: rgb(245, 245, 245);
+
+}
+
+.table>thead>tr>th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #ddd;
+    border: 0.5px solid gray !important;
+    padding: 10px;
+}
+
+.table tbody tr td:last-child,.table thead tr th:last-child{
+    border-left: 0;
+}
+.table tbody tr td:first-child,.table thead tr th:first-child{
+    border-right: 0;
+}
+
+.table tbody tr td{
+    border-top: 1px dashed gray !important;
+    border-collapse: collapse;
+    border-right: 0.5px solid gray !important;
+    text-align: center;
+    line-height: 0.7;
+}
+
+.table tbody tr:last-child td{
+    border-bottom: 1px dashed gray !important;
+}
+
+.table caption{
+    color: #000000;
+}
+
+.total-balance{
+    padding: 5px;
+    margin-top: 5px;
+    border-top: 2px dotted #000000;
+}
+
+.total-balance .pull-right{
+    margin-right: 8px;
+}
+
+.total{
+    font-weight: bold;
+    border-bottom: 2px dashed #000 !important;
+    width: 50%;
+    text-align: center;
+}

@@ -1,0 +1,33 @@
+
+@font-face {
+    font-family: "Motken";
+    src: url("../fonts/KHoma.ttf");
+}
+
+@font-face {
+    font-family: "SC_DUBAI";
+    font-style: all;
+    src: url("../fonts/SC_DUBAI.ttf");
+}
+
+@font-face {
+    font-family: "AlArabiya";
+    font-style: all;
+    src: url("../fonts/AlArabiya.ttf");
+}
+
+@font-face {
+    font-family: "DroidKufi-Bold";
+    font-style: all;
+    src: url("../fonts/DroidKufi/DroidKufi-Bold.ttf");
+}
+
+@font-face {
+    font-family: "DroidKufi-Regular";
+    font-style: all;
+    src: url("../fonts/DroidKufi/DroidKufi-Regular.ttf");
+}
+
+
+
+

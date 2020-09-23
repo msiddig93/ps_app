@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/LIB/vendor/composer" />
+      <path value="$PROJECT_DIR$/LIB/vendor/tecnickcom/tcpdf" />
+      <path value="$PROJECT_DIR$/LIB/vendor/spipu/html2pdf" />
+      <path value="$PROJECT_DIR$/LIB/vendor/noty/lib" />
+      <path value="$PROJECT_DIR$/LIB/vendor/noty/src" />
+    </include_path>
+  </component>
+</project>
