@@ -1,41 +1,31 @@
-<link href="<?= ROOT ?>/Public/css/pdf-style.css" type="text/css" rel="stylesheet" />
-<page backtop="20mm" backbottom="10mm" backleft="10mm" backright="10mm">
-    <?php
-        require_once ROOT.'/App/Views/PDF/pdf-header-footer.php';
-    ?>
-    <br>
-    <h3>لائحة المنتجات</h3>
-    <br>
-    <table class="table-pdf" cellspacing="0" cellpadding="0">
+
+    <h3 class="text-center size-10">تقرير العملاء</h3>
+    <table class="table" cellspacing="0" cellpadding="0">
         <thead>
         <tr>
             <th class="num" >الرقم</th>
             <th class="fname" >الاسم الكامل</th>
-            <th class="function" >الوظيفة</th>
-            <th class="role" >حق الولوج</th>
+            <th class="role" >العنوان</th>
             <th class="phone" >الهاتف</th>
+            <th class="function" >البريد الالكتروني</th>
         </tr>
         </thead>
 
         <tbody>
         <?php
-        $num = 1;
-        foreach($users as $user):?>
-            <?php if ( $user->id > 1 ) { ?>
+            $num = 1;
+            foreach($customers as $customer):
+        ?>
                 <tr>
                     <td><?= $num ?></td>
-                    <td><?= $user->fname . " " . $user->lname ?></td>
-                    <td><?= $user->function ?></td>
-                    <td><?= $user->role_name ?></td>
-                    <td><?= $user->phone ?></td>
+                    <td><?= $customer->cust_name ?></td>
+                    <td><?= $customer->address ?></td>
+                    <td><?= $customer->phone ?></td>
+                    <td><?= $customer->email ?></td>
                 </tr>
-                <?php
-            }
-            $num +=1;
+        <?php   $num +=1;
             endforeach;
             ?>
         </tbody>
     </table>
-</page>
-
 

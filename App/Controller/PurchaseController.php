@@ -8,11 +8,13 @@ use App\Upload;
 class  PurchaseController extends Controller
 {
     private static $Order;
+    private static $Stock;
 
     public function __construct()
     {
         parent::__construct();
         self::$Order = $this->loadModel('Purchase');
+        self::$Stock = $this->loadModel('Stock');
     }
 
     public function index()
@@ -51,10 +53,11 @@ class  PurchaseController extends Controller
     {
         $stmt = self::$Order->load();
         $re = "";
+        $number =1;
         foreach($stmt as $result):
             $re.="<tr>
                         <td>
-                           ". $result->id ."
+                           ". $number ."
                         </td>
                         
                         <td>
@@ -76,8 +79,8 @@ class  PurchaseController extends Controller
                                title='طباعة'><i class='fa fa-print'></i>
                             </a> 
                             <a class='btn btn-danger'
-                                href='".App::$path."sales/printBill/". $result->id ."'
-                                target='_blank'
+                                element_id='". $result->id ."'
+                                onclick='DeleteOrder(this ,event);'
                                 title='حذف'><i class='fa fa-ban'></i>
                             </a> 
                             <a class='btn btn-primary'
@@ -87,6 +90,7 @@ class  PurchaseController extends Controller
                             </a> 
                         </td>
                     </tr>";
+                    $number++;
         endforeach;
         return $re;
     }
@@ -122,7 +126,7 @@ class  PurchaseController extends Controller
                         
                         <td class='table-actions'>
                             <a class='btn btn-success btn-xs'
-                               element_id='". $result->id ."'
+                               element_id='". $result->product_id ."'
                                onclick='EditElement(this,event)'
                                title='تعديل'><i class='fa fa-pencil-square'></i></a>
                             <a class='btn btn-danger btn-xs'
@@ -132,6 +136,7 @@ class  PurchaseController extends Controller
                                 <i class='fa fa-trash-o'></i></a>
                         </td>
                     </tr>";
+                $number++;
         endforeach;
         return $re;
     }
@@ -293,6 +298,25 @@ class  PurchaseController extends Controller
             $rs = self::$Order->create($params);
 
             if ($rs) {
+                self::$Order->setTable("stock");
+                $product = self::$Order->find($_POST['product_id']);
+                
+                if(!empty($product)){
+                    $params =[
+                        'qte' => $product->qte + $_POST['quantity'],
+                    ];
+                    self::$Order->update($product->id, $params);                    
+                }else{
+                    $params =[
+                        'id' => null,
+                        'product_id' => $_POST['product_id'],
+                        'qte' => $_POST['quantity'],
+                    ];
+                    
+                    self::$Order->create($params);
+                }
+
+                
                 return 1;
             } else {
                 return 0;
@@ -304,74 +328,21 @@ class  PurchaseController extends Controller
     public function EditItems()
     {
         $where = "";
+        
         if (!empty($_POST) ) {
-            $last = 0;
-            if (isset($_POST['STATUS']) && $_POST['STATUS'] == 1){
-                $mod = ($_POST['VALUE'] * $_POST['BASIC_PRICE'] ) / 100 ;
-                $last = $_POST['BASIC_PRICE'] - $mod;
-            }else{
-                $last = $_POST['BASIC_PRICE'];
-            }
-
-            $params = [
-                'ITEM_ID' => $_POST['ITEM_ID'],
-                'LAST_PRICE' => $last,
-                'QTE' => $_POST['QTE'],
+            
+            $params =[
+                'purchase_order_id' => $_POST['purchase_order_id'],
+                'product_id' => $_POST['product_id'],
+                'price' => $_POST['price'],
+                'quantity' => $_POST['quantity'],
+                'discount' => $_POST['discount'],
             ];
 
-            $where = " WHERE INVO_ID = {$_POST['INVO_ID']} ";
-            $where .= " AND ITEM_ID = {$_POST['ITEM_ID']} ";
-            self::$Order->setTable("INVOIC_DETIALS");
-            $rs = self::$Order->updateItem($where ,$params);
+            self::$Order->setTable("purchase_order_details");
+            $rs = self::$Order->update(self::$Order->loadEditItem([$_POST['product_id'],$_POST['purchase_order_id']])->id, $params);
 
             if ($rs) {
-                if (isset($_POST['STATUS']) && $_POST['STATUS'] == 1){
-                    $mod = ($_POST['VALUE'] * $_POST['BASIC_PRICE'] ) / 100 ;
-                    $last = $_POST['BASIC_PRICE'] - $mod;
-                    $price = ( $_POST['BASIC_PRICE'] - $last ) * $_POST['QTE'] ;
-
-                    $where = " WHERE INVO_ID = {$_POST['INVO_ID']} ";
-                    $where .= " AND ITEM_ID = {$_POST['ITEM_ID']} ";
-                    if (self::$Order->TestInsuranceStatus([$_POST['ITEM_ID'],$this->INVOIC_ID()])) {
-                        $params = [
-                            'COMPANY_ID' => $_POST['COMPANY_ID'],
-                            'AMOUNT' => $price,
-                            'CREATED_AT' => date('d-M-Y'),
-                        ];
-
-                        self::$Order->setTable("DELAY_COMPANY");
-                        $rs = self::$Order->updateItem($where, $params);
-                    }else{
-                        $mod = ($_POST['VALUE'] * $_POST['BASIC_PRICE'] ) / 100 ;
-                        $last = $_POST['BASIC_PRICE'] - $mod;
-                        $price = ( $_POST['BASIC_PRICE'] - $last ) * $_POST['QTE'] ;
-
-                        $params = [
-                            'COMPANY_ID' => $_POST['COMPANY_ID'],
-                            'INVO_ID' => $_POST['INVO_ID'],
-                            'AMOUNT' => $price,
-                            'CREATED_AT' => date('d-M-Y'),
-                            'ITEM_ID' => $_POST['ITEM_ID'],
-                            'PAY_STATUS' => 0,
-                            'PAYED' => 0
-                        ];
-
-                        self::$Order->setTable("DELAY_COMPANY");
-                        if( $price > 0 ){
-                            $rs = self::$Order->create($params);
-                        }
-                    }
-
-                }else{
-                    if (self::$Order->TestInsuranceStatus([$_POST['ITEM_ID'],$this->INVOIC_ID()])){
-                        $where = " WHERE ITEM_ID = {$_POST['ITEM_ID']}";
-                        $where .= " AND INVO_ID = {$this->INVOIC_ID()}";
-                        self::$Order->setTable("DELAY_COMPANY");
-                        self::$Order->deleteItem($where);
-                    }
-                }
-
-
                 return 1;
             } else {
                 return 0;
@@ -468,8 +439,18 @@ class  PurchaseController extends Controller
 
     public function delete()
     {
-        self::$Order->setTable("INSURANCECOMM");
+        
         if (isset($_POST['id'])) {
+            $stmt = self::$Order->loadItem(" AND purchase_order_details.purchase_order_id = ".$_POST['id']);
+            
+            if(!empty($stmt)){
+                self::$Order->setTable("purchase_order_details");
+                foreach($stmt as $item){
+                    $re = self::$Order->delete($item->id);
+                }
+            }
+
+            self::$Order->setTable("purchase_order");
             $re = self::$Order->delete($_POST['id']);
             if($re)
             {
@@ -485,26 +466,18 @@ class  PurchaseController extends Controller
     public function deleteItem()
     {
         if (!empty($_POST) ) {
-
-
-            if (self::$Order->TestInsuranceStatus([$_POST['ITEM_ID'],$this->INVOIC_ID()])){
-                $where = " WHERE ITEM_ID = {$_POST['ITEM_ID']}";
-                $where .= " AND INVO_ID = {$this->INVOIC_ID()}";
-                self::$Order->setTable("DELAY_COMPANY");
-                self::$Order->deleteItem($where);
+            self::$Order->setTable("purchase_order_details");
+            if (isset($_POST['ITEM_ID'])) {
+                $re = self::$Order->delete($_POST['ITEM_ID']);
+                if($re)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
             }
-
-            $where = " WHERE ITEM_ID = {$_POST['ITEM_ID']}";
-            $where .= " AND INVO_ID = {$this->INVOIC_ID()}";
-            self::$Order->setTable("INVOIC_DETIALS");
-            $rs = self::$Order->deleteItem($where);
-
-            if ($rs){
-                return 1;
-            }else{
-                return 0;
-            }
-
         }
     }
 

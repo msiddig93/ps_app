@@ -73,6 +73,24 @@ class Model
         return $array;
     }
 
+    public function extractStock($key ,$value , $filter = "" )
+    {
+        $records = $this->query("
+                SELECT product.id,product.product_name,stock.qte 
+                FROM `stock`
+                INNER JOIN product ON product.id = stock.product_id
+                WHERE 1
+                ");
+        $array = [];
+
+        foreach( $records as $rows )
+        {
+            $array[$rows->$key] = $rows->$value;
+        }
+
+        return $array;
+    }
+
     public function setTable($table)
     {
         return self::$table = $table;
@@ -121,6 +139,11 @@ class Model
         $sql_pairs = implode(',', $sql_pairs);
 
         return $this->query(" UPDATE {$this->getTable()} SET $sql_pairs {$id} " ,$attributes);
+    }
+
+    public function findStock($id)
+    {
+        return $this->query("SELECT * FROM stock WHERE product_id = ? ",[$id] , true);
     }
 
     public function find($id)

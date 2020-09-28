@@ -469,3 +469,20 @@
     </div>
 </div>
 
+<div class="modal fade" id="comfirm2" style="top: 25%" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 500px !important;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <section class="content-header">
+                    <span class="content-title"> <i class="fa fa-file-text-o"></i> أمر البيع <i class="fa fa-chevron-left"></i> <h3>هل أنت متأكد من حذف أمر البيع</h3></a></span>
+                </section>
+                <div style="margin: 30px">
+                    <input type="button" class="btn btn-success pull-right"  id="btn-delete-order" onclick='comfirmDeleteOrder(this ,event);' element_id="0"  style="width: 100px" value="نعم">
+                    <input class="btn btn-danger pull-left" style="width: 100px" data-dismiss="modal" value="لا">
+                </div>
+                <div style="clear: both"></div>
+            </div>
+        </div>
+    </div>
+</div>
+

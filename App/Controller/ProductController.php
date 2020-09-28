@@ -276,13 +276,7 @@ class ProductController extends Controller
 
     public function printlist()
     {
-        $filter = '';
-        if (isset($_SESSION['filter']))
-        {
-            $filter = $_SESSION['filter'];
-        }
-
-        $products = self::$Emp->load($filter);
-        $this->pdf('product/printlist',compact('products'));
+        $products = self::$Emp->load();
+        $this->pdf('stock/printProductList',compact('products'));
     }
 }

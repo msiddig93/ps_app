@@ -42,67 +42,6 @@
     </div>
     <div class="col-lg-9">
         <div class="row form-search-wrap">
-
-            <div class="box-infos-search">
-                <section class="content-header box-info-header">
-                    <span class="content-title"> <i class="fa fa-home"></i> البحث</span>
-                </section>
-
-                <div class="box-infos">
-                    <form name="form-emp-search" id="form-element-search">
-                        <div class="row">
-                            <div class="col-md-4 col-sm-6 col-xs-12">
-                                <?= $form->input("FULLNAME","الاسم الكامل",[
-                                    "type" => "text",
-                                    "id" => "FULLNAME",
-                                    "class" => "form-control",
-                                    "placeholder" => "الاسم الكامل",
-                                    "data-validation" => "length",
-                                    'data-validation-optional' => 'true',
-                                    "data-validation-length" => "1-255",
-                                    "data-validation-error-msg" => "عزراً ... لايمكن ترك الاسم الكامل فارغ !"
-                                ]) ?>
-                            </div>
-
-                            <div class="col-md-4 col-sm-6 col-xs-12">
-                                <?= $form->select('TYPE','نوع المستخدم',$type,[
-                                    'class' => 'form-control',
-                                    'data-validation' => 'length',
-                                    'data-validation-optional' => 'true',
-                                    'data-validation-length' => '1-50',
-                                    'data-validation-error-msg' => 'عزراً ... يجب تحديد نوع المستخدم !'
-                                ],true);?>
-                            </div>
-
-                            <?= $form->input("ajax_action","",[
-                                "type" => "hidden",
-                                "value" => "emp.search",
-                            ]) ?>
-
-                            <div class="col-md-4 col-sm-6 col-xs-6">
-                                <?= $form->select('BRANSH_ID','فرع العمــل',$bransh,[
-                                    'class' => 'form-control',
-                                    'data-validation' => 'length',
-                                    'data-validation-optional' => 'true',
-                                    'data-validation-length' => '1-50',
-                                    'data-validation-error-msg' => 'عزراً ... يجب تحديد فرع العمــل !'
-                                ],true);?>
-                            </div>
-
-                            <div class="col-lg-12 form-group text-center">
-                                <?= $form->input('btn-search-emp','',[
-                                    'type' => 'submit',
-                                    'id' => 'btn-search-emp',
-                                    'class' => 'btn btn-info',
-                                    'value' => 'بحث'
-                                ]);
-
-                                ?>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
         </div>
         <div class="table-responsive">
             <table class="table main-table rtl_table data-table table-striped table-hover">
@@ -139,7 +78,7 @@
                 <section class="">
                     <form method="post" enctype="multipart/form-data" id="form-save-element">
                         <div class="col-sm-4 col-xs-12" >
-                            <section ="" class="content-header box-info-header">
+                            <section  class="content-header box-info-header">
                                 <span class="content-title"> <i class="fa fa-info-circle"></i> أمر الشراء</span>
                             </section>
                             <br>
@@ -334,6 +273,23 @@
                 </section>
                 <div style="margin: 30px">
                     <input type="button" class="btn btn-success pull-right"  id="btn-delete" element_id="0"  style="width: 100px" value="نعم">
+                    <input class="btn btn-danger pull-left" style="width: 100px" data-dismiss="modal" value="لا">
+                </div>
+                <div style="clear: both"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="comfirm2" style="top: 25%" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 500px !important;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <section class="content-header">
+                    <span class="content-title"> <i class="fa fa-file-text-o"></i> أمر الشراء <i class="fa fa-chevron-left"></i> <h3>هل أنت متأكد من حذف أمر الشراء</h3></a></span>
+                </section>
+                <div style="margin: 30px">
+                    <input type="button" class="btn btn-success pull-right"  id="btn-delete-order" onclick='comfirmDeleteOrder(this ,event);' element_id="0"  style="width: 100px" value="نعم">
                     <input class="btn btn-danger pull-left" style="width: 100px" data-dismiss="modal" value="لا">
                 </div>
                 <div style="clear: both"></div>

@@ -8,13 +8,7 @@
             </a>
         </li>
         <li>
-            <a href="" class="btn btn-info" onclick="searchToggle('form-search-wrap',event);">
-                <i class="fa fa-search"></i>
-                <span class="hidden-xs hidden-sm">بحث</span>
-            </a>
-        </li>
-        <li>
-            <a href="<?= App::$path ?>bransh/printlist" target="_blank" class="btn btn-default">
+            <a href="<?= App::$path ?>category/printlist" target="_blank" class="btn btn-default">
                 <i class="fa fa-print"></i>
                 <span class="hidden-xs hidden-sm">طباعة</span>
             </a>

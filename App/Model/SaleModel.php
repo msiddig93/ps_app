@@ -16,9 +16,8 @@ class SaleModel extends Model
                                 SELECT sale_order.*,emp.FULLNAME,customer.cust_name FROM `sale_order`,emp,customer
                                 WHERE emp.ID = sale_order.created_by
                                 AND customer.id = sale_order.customer_id
+                                ".$filter."
                                 ORDER BY sale_order.id DESC
-                            
-                            ".$filter."
                 ");
     }
 
@@ -33,6 +32,17 @@ class SaleModel extends Model
                             AND INVOICS.BRANSH_ID = ".App::$BranshID."
                             AND INVOICS.ID = ?
                 ",[$id],true);
+    }
+
+    public function LastItem( $filter = null )
+    {
+        return $this->query("SELECT 
+                                        sale_order_details.*,
+                                        product_name 
+                                      FROM 
+                                sale_order_details , product
+                                WHERE product.id = sale_order_details.product_id
+                                ORDER BY sale_order_details.id DESC",$filter,true);
     }
 
     public function loadItem( $filter = null )
@@ -53,7 +63,7 @@ class SaleModel extends Model
                                         sale_order_details.*
                                       FROM 
                                 sale_order_details 
-                                WHERE sale_order_details.id = ?
+                                WHERE sale_order_details.product_id = ?
                                 AND sale_order_id = ?
                                 ",$filter,true
         );

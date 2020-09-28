@@ -7,12 +7,12 @@ use App\Upload;
 
 class StockController extends Controller
 {
-    private static $Emp;
+    private static $Stock;
 
     public function __construct()
     {
         parent::__construct();
-        self::$Emp = $this->loadModel('Stock');
+        self::$Stock = $this->loadModel('stock');
     }
 
     public function index()
@@ -23,95 +23,76 @@ class StockController extends Controller
 
     public function load()
     {
-        self::$Emp->setTable("stockroom");
-        $stockrooms = self::$Emp->load();
+        $items = self::$Stock->load();
         $re = "";
         $number = 1;
-        foreach($stockrooms as $stockroom):
-            if ( $stockroom->id > 0    ) {
-                $re.="<tr>
-                        <td>
-                            <a href='#'>
-                                <img class='media-object avatar' src='". App::$path ."img/stockroom/". $stockroom->AVATAR ."'>
-                            </a>
-                        </td>
-                        <td>".$number."</td>
-                        <td>".$stockroom->vend_name."</td>
-                        <td>".$stockroom->address."</td>
-                        <td>".$stockroom->phone."</td>
-                        <td>".$stockroom->email."</td>
-                        
-                        <td class='table-actions'>
-                            <a class='btn btn-success btn-xs'
-                               element_id='". $stockroom->id ."'
-                               onclick='EditElement(this,event)'
-                               title='تعديل'><i class='fa fa-pencil-square'></i></a>
-                            <a class='btn btn-danger btn-xs'
-                               element_id='". $stockroom->id ."'
-                               title='حذف'
-                               onclick='DeleteElement(this ,event);' >
-                                <i class='fa fa-trash-o'></i></a>
-                        </td>
-                    </tr>";
-            }
-
+        foreach($items as $item):
+            $re.="<tr>
+                    <td>".$number."</td>
+                    <td>".$item->product_name."</td>
+                    <td>".$item->cat_name."</td>
+                    <td>".$item->purchase_price."</td>
+                    <td>".$item->sale_price."</td>
+                    <td><strong>".$item->qte."</strong></td>
+                </tr>";
+            $number++;
         endforeach;
         return $re;
     }
 
     public function loadAddID()
     {
-        self::$Emp->setTable("stockroom");
-        return self::$Emp->NextID();
+        self::$Stock->setTable("item");
+        return self::$Stock->NextID();
     }
 
     public function search()
     {
         $filter = '';
         
-        if (isset($_POST['FULLNAME']) && !stockroomty($_POST['FULLNAME'])) {
+        if (isset($_POST['FULLNAME']) && !itemty($_POST['FULLNAME'])) {
             $filter .= " AND FULLNAME LIKE '%{$_POST['FULLNAME']}%' ";
         }
 
-        if (isset($_POST['TYPE']) && !stockroomty($_POST['TYPE'])) {
+        if (isset($_POST['TYPE']) && !itemty($_POST['TYPE'])) {
             $filter .= "AND TYPE LIKE '%{$_POST['TYPE']}%' ";
         }
 
-        $_SESSION['search-stockroom'] = $filter;
+        $_SESSION['search-item'] = $filter;
 
-        self::$Emp->setTable("stockroom");
-        $stockrooms = self::$Emp->load($filter);
+        self::$Stock->setTable("item");
+        $items = self::$Stock->load($filter);
         $re = "";
-        foreach($stockrooms as $stockroom):
-            if ( $stockroom->ID > 0    ) {
+        foreach($items as $item):
+            if ( $item->ID > 0    ) {
                 $re.="<tr>
                         <td>
                             <a href='#'>
-                                <img class='media-object avatar' src='". App::$path ."img/stockroom/". $stockroom->AVATAR ."'>
+                                <img class='media-object avatar' src='". App::$path ."img/item/". $item->AVATAR ."'>
                             </a>
                         </td>
                         <td>
                             <h4>
                                 <a href='#'>
-                                    ". $stockroom->FULLNAME ."
+                                    ". $item->FULLNAME ."
                                 </a>
                             </h4>
-                            <p>إسم المستخدم : ". $stockroom->LOGIN ."@</p>
+                            <p>إسم المستخدم : ". $item->LOGIN ."@</p>
                         </td>
                         <td>
-                            <p>العنوان : ". $stockroom->ADDRSS ."</p>
+                            <p>العنوان : ". $item->ADDRSS ."</p>
                         </td>
                         <td>
-                            <p style='direction: ltr'> الهاتف : ". $stockroom->PHONE ."</p>
-                            <p>". $stockroom->TYPE ."</p>
+                            <p style='direction: ltr'> الهاتف : ". $item->PHONE ."</p>
+                            <p>". $item->TYPE ."</p>
                         </td>
                         <td class='table-actions'>
                             <a class='btn btn-success btn-xs'
-                               element_id='". $stockroom->ID ."'
+                               element_id='". $item->ID ."'
                                onclick='EditElement(this,event)'
                                title='تعديل'><i class='fa fa-pencil-square'></i></a>
                             <a class='btn btn-danger btn-xs'
-                               element_id='". $stockroom->ID ."'
+                               element_id='". $item->ID ."'
                                title='حذف'
                                onclick='DeleteElement(this ,event);' >
                                 <i class='fa fa-trash-o'></i></a>
@@ -125,10 +106,10 @@ class StockController extends Controller
 
     public function add()
     {
-        self::$Emp->setTable("stockroom");
+        self::$Stock->setTable("item");
         $avatar = $this->loadAddID();
         $form = new Form($_POST);
-        if (!empty($_POST) ) {
+        if (!Stockty($_POST) ) {
 
             if( $_FILES['avatar']['name'][0] != "" ){
                 $avatar = $avatar .".". @strtolower(end(explode('.',$_FILES['avatar']['name'][0] )));
@@ -147,14 +128,14 @@ class StockController extends Controller
                     'AVATAR' => $avatar,
                 ];
 
-            $rs = self::$Emp->create($params);
+            $rs = self::$Stock->create($params);
 
             if ($rs):
                 if ( $_FILES['avatar']['name'][0] != "" ) {
                     Upload::one(
                             $_FILES['avatar'],
                             $avatar,
-                            ROOT.'/public/img/stockroom/'
+                            ROOT.'/public/img/item/'
                         );
 
                 }
@@ -171,16 +152,16 @@ class StockController extends Controller
     public function edit()
     {
         $id = $_POST['ID'] ;
-        $stockroom = self::$Emp->find($id);
+        $item = self::$Stock->find($id);
 
-        if (!empty($_POST) ) {
-            self::$Emp->setTable("stockroom");
+        if (!Stockty($_POST) ) {
+            self::$Stock->setTable("item");
             if( $_FILES['avatar']['name'][0] != "" ){
                 $avatar = $id .".". @strtolower(end(explode('.',$_FILES['avatar']['name'][0] )));
             }
             else
             {
-                $avatar = $stockroom->AVATAR;
+                $avatar = $item->AVATAR;
             }
 
             $params =[
@@ -191,14 +172,14 @@ class StockController extends Controller
                 'phone' => $_POST['phone'],
             ];
 
-            $rs =  self::$Emp->update( $id ,$params);
+            $rs =  self::$Stock->update( $id ,$params);
 
             if ($rs):
                 if ( $_FILES['avatar']['name'][0] != "" ) {
                     Upload::one(
                         $_FILES['avatar'],
                         $avatar,
-                        ROOT.'/public/img/stockroom/'
+                        ROOT.'/public/img/item/'
                     );
 
                 }
@@ -214,47 +195,47 @@ class StockController extends Controller
 
     public function LoadElementEdit()
     {
-        self::$Emp->setTable("stockroom");
-        $stockroom = self::$Emp->find($_POST['id']);
-        $re = json_encode($stockroom, JSON_PRETTY_PRINT);
+        self::$Stock->setTable("item");
+        $item = self::$Stock->find($_POST['id']);
+        $re = json_encode($item, JSON_PRETTY_PRINT);
 
         return $re;
     }
 
-    public function loadEmpImg()
+    public function loadStockImg()
     {
-        self::$Emp->setTable("stockroom");
-        $re = self::$Emp->find($_POST['id']);
+        self::$Stock->setTable("item");
+        $re = self::$Stock->find($_POST['id']);
 
         if ($re) {
-            return App::$path . "img/stockroom/" . $re->AVATAR;
+            return App::$path . "img/item/" . $re->AVATAR;
         }else{
-            return App::$path . "img/stockroom/0.png";
+            return App::$path . "img/item/0.png";
         }
     }
 
     public function profile()
     {
-        self::$Emp->setTable("stockroom");
+        self::$Stock->setTable("item");
         $id = isset($_GET['id']) ? intval($_GET['id']) : 0 ;
-        $profile = self::$Emp->profile($id);
-        $this->render('stockroom/profile',compact('profile'));
+        $profile = self::$Stock->profile($id);
+        $this->render('item/profile',compact('profile'));
     }
 
 
     public function printinfos()
     {
-        self::$Emp->setTable("Articles");
+        self::$Stock->setTable("Articles");
         $id = isset($_GET['id']) ? intval($_GET['id']) : 0 ;
-        $article = self::$Emp->findArticle($id);
+        $article = self::$Stock->findArticle($id);
         $this->pdf('articles/printinfos',compact('article'));
     }
 
     public function delete()
     {
-        self::$Emp->setTable("stockroom");
+        self::$Stock->setTable("item");
         if (isset($_POST['id'])) {
-            $re = self::$Emp->delete($_POST['id']);
+            $re = self::$Stock->delete($_POST['id']);
             if($re)
             {
                 return 1;
@@ -268,13 +249,7 @@ class StockController extends Controller
 
     public function printlist()
     {
-        $filter = '';
-        if (isset($_SESSION['filter']))
-        {
-            $filter = $_SESSION['filter'];
-        }
-
-        $stockrooms = self::$Emp->load($filter);
-        $this->pdf('stockroom/printlist',compact('stockrooms'));
+        $items = self::$Stock->load();
+        $this->pdf('stock/printlist',compact('items'));
     }
 }

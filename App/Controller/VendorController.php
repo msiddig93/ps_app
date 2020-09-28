@@ -266,15 +266,8 @@ class VendorController extends Controller
         } 
     }
 
-    public function printlist()
-    {
-        $filter = '';
-        if (isset($_SESSION['filter']))
-        {
-            $filter = $_SESSION['filter'];
-        }
-
-        $vendors = self::$Emp->load($filter);
+    public function printlist(){
+        $vendors = self::$Emp->load();
         $this->pdf('vendor/printlist',compact('vendors'));
     }
 }

@@ -20,7 +20,8 @@ class  SaleController extends Controller
         $form = new Form($_POST);
 
         self::$Order->setTable("product");
-        $products = self::$Order->extract("id","product_name");
+        // $products = self::$Order->extract("id","product_name");
+        $products = self::$Order->extractStock("id","product_name");
 
         self::$Order->setTable("customer");
         $customers = self::$Order->extract("id","cust_name");
@@ -51,10 +52,12 @@ class  SaleController extends Controller
     {
         $stmt = self::$Order->load();
         $re = "";
+        $number = 1;
         foreach($stmt as $result):
+
             $re.="<tr>
                         <td>
-                           ". $result->id ."
+                           ". $number ."
                         </td>
                         
                         <td>
@@ -71,13 +74,13 @@ class  SaleController extends Controller
                         </td>
                         <td class='table-actions'>
                             <a class='btn btn-default'
-                               href='".App::$path."sales/printBill/". $result->id ."'
+                               href='".App::$path."sale/printBill/". $result->id ."'
                                target='_blank'
                                title='طباعة'><i class='fa fa-print'></i>
                             </a> 
                             <a class='btn btn-danger'
-                                href='".App::$path."sales/printBill/". $result->id ."'
-                                target='_blank'
+                                element_id='". $result->id ."'
+                                onclick='DeleteOrder(this ,event);'
                                 title='حذف'><i class='fa fa-ban'></i>
                             </a> 
                             <a class='btn btn-primary'
@@ -88,6 +91,7 @@ class  SaleController extends Controller
                             </a> 
                         </td>
                     </tr>";
+                    $number++;
         endforeach;
         return $re;
     }
@@ -97,8 +101,8 @@ class  SaleController extends Controller
 
         $stmt = self::$Order->loadItem(" AND sale_order_details.sale_order_id = ".$this->INVOIC_ID());
         
-        if(empty($stmt)){
-            return "<div class='alert alert-danger alert-block m-5' >لم يتم إضافة أي منتجات لهذا الامر بعد</div>";
+        if(!$stmt){
+            return "<div class='alert alert-danger alert-block' >لم يتم إضافة أي منتجات لهذا الامر بعد</div>";
         }
 
         $re = "";
@@ -154,109 +158,12 @@ class  SaleController extends Controller
         return self::$Order->NextID();
     }
 
-    public function search()
-    {
-        $filter = '';
-
-        if (isset($_POST['FULLNAME']) && !empty($_POST['FULLNAME'])) {
-            $filter .= " AND FULLNAME LIKE '%{$_POST['FULLNAME']}%' ";
-        }
-
-        if (isset($_POST['TYPE']) && !empty($_POST['TYPE'])) {
-            $filter .= "AND TYPE LIKE '%{$_POST['TYPE']}%' ";
-        }
-
-        if (isset($_POST['BRANSH_ID']) && !empty($_POST['BRANSH_ID'])) {
-            $filter .= "AND BRANSH_ID LIKE '%{$_POST['BRANSH_ID']}%' ";
-        }
-
-        $_SESSION['search-emp'] = $filter;
-
-        self::$Order->setTable("INSURANCECOMM");
-        $stmt = self::$Order->load($filter);
-        $re = "";
-        foreach($stmt as $result):
-            if ( $result->ID > 0    ) {
-                $re.="<tr>
-                        <td>
-                            <a href='#'>
-                                <img class='media-object avatar' src='". App::$path ."img/emp/". $result->AVATAR ."'>
-                            </a>
-                        </td>
-                        <td>
-                            <h4>
-                                <a href='#'>
-                                    ". $result->FULLNAME ."
-                                </a>
-                            </h4>
-                            <p>إسم المستخدم : ". $result->LOGIN ."@</p>
-                        </td>
-                        <td>
-                            <p>العنوان : ". $result->ADDRSS ."</p>
-                            <p> الفرع : ". $result->NAME ."#  </p>
-                        </td>
-                        <td>
-                            <p style='direction: ltr'> الهاتف : ". $result->PHONE ."</p>
-                            <p>". $result->TYPE ."</p>
-                        </td>
-                        <td class='table-actions'>
-                            <a class='btn btn-success btn-xs'
-                               element_id='". $result->ID ."'
-                               onclick='EditElement(this,event)'
-                               title='تعديل'><i class='fa fa-pencil-square'></i></a>
-                            <a class='btn btn-danger btn-xs'
-                               element_id='". $result->ID ."'
-                               title='حذف'
-                               onclick='DeleteElement(this ,event);' >
-                                <i class='fa fa-trash-o'></i></a>
-                        </td>
-                    </tr>";
-            }
-
-        endforeach;
-        return $re;
-    }
-
     public function add()
     {
         if (!empty($_POST) ) {
             $stmt = self::$Order->loadItem(" AND sale_order_details.sale_order_id = ".$this->INVOIC_ID());
 
-            // if ($stmt){
-            //     foreach($stmt as $result):
-            //         $qte = $result->QTE;
-            //         $result->ITEM_ID;
-            //         $items = self::$Order->LoadStockItem([$result->ITEM_ID]);
 
-            //         foreach($items as $item ){
-            //             if ($qte > 0 ){
-
-            //                 if ( $qte > $item->QTE ){
-            //                     $newQte = $item->QTE - $qte ;
-            //                     $qte = $qte - $item->QTE;
-            //                     self::$Order->setTable("STOCK");
-            //                     $params = [
-            //                         'QTE' => $newQte,
-            //                     ];
-            //                     $rs =  self::$Order->update( $item->ID ,$params);
-            //                 }else{
-            //                     $newQte = $item->QTE - $qte ;
-            //                     self::$Order->setTable("STOCK");
-            //                     $params = [
-            //                         'QTE' => $newQte,
-            //                     ];
-            //                     $rs =  self::$Order->update( $item->ID ,$params);
-            //                     $qte = 0;
-            //                 }
-
-            //             }else{
-            //                 break;
-            //             }
-            //         }
-            //     endforeach;
-            // }else{
-            //     return 2;
-            // }
 
             $params = [
                 'id' => null,
@@ -270,6 +177,19 @@ class  SaleController extends Controller
             $rs = self::$Order->create($params);
 
             if ($rs) {
+                
+                $current_sale_id = self::$Order->LastItem()->sale_order_id;
+                $sale_order_details = self::$Order->loadItem("AND sale_order_id = {$current_sale_id}");
+                foreach($sale_order_details as $order){
+                    $params =[
+                        'sale_order_id' => self::$Order->load()[0]->id,
+                    ];
+        
+                    self::$Order->setTable("sale_order_details");
+                    $rs = self::$Order->update($order->id, $params);
+                }
+                
+        // 
                 return 1;
             } else {
                 return 0;
@@ -286,6 +206,11 @@ class  SaleController extends Controller
                 return 2;
             }
 
+            $product = self::$Order->findStock($_POST['product_id']);
+           
+            if( $_POST['quantity'] > $product->qte){
+                return 3;
+            }
 
             $params =[
                 'id' => null,
@@ -298,8 +223,13 @@ class  SaleController extends Controller
 
             self::$Order->setTable("sale_order_details");
             $rs = self::$Order->create($params);
-
             if ($rs) {
+                self::$Order->setTable("stock");
+                $product = self::$Order->findStock($_POST['product_id']);
+                $params =[
+                    'qte' => $product->qte - $_POST['quantity'],
+                ];
+                self::$Order->update($product->id, $params);
                 return 1;
             } else {
                 return 0;
@@ -311,23 +241,25 @@ class  SaleController extends Controller
     public function EditItems()
     {
         $where = "";
+        
         if (!empty($_POST) ) {
-            $order_details = self::$Order->loadEditItem([$_POST['id'],$this->INVOIC_ID()]);
-            // check the new Product if is already entered in this ane Sale Order 
-            // Load Product in this order .
-            $test = self::$Order->CheckProductInOrder([$_POST['sale_order_id'], $order_details->product_id ]);
             
-            if ($test){
-                // check if alreadu Entered throgh this loop 
-                foreach($test as $order):
-                    if($order->product_id == $_POST['product_id'])
-                        return 2;
-                endforeach;
+            self::$Order->setTable("sale_order_details");
+            $product = self::$Order->findStock($_POST['product_id']);
+            $current_oder_diatils = self::$Order->find($_POST['id']);
+            $sum = $product->qte + $current_oder_diatils->quantity;
+            if( $_POST['quantity'] > $sum){
+                return 3;
             }
 
+            self::$Order->setTable("stock");
+            $product = self::$Order->findStock($_POST['product_id']);
+            $params =[
+                'qte' => $sum,
+            ];
+            self::$Order->update($product->id, $params);
 
             $params =[
-                'sale_order_id' => $_POST['sale_order_id'],
                 'product_id' => $_POST['product_id'],
                 'price' => $_POST['price'],
                 'quantity' => $_POST['quantity'],
@@ -337,9 +269,13 @@ class  SaleController extends Controller
             self::$Order->setTable("sale_order_details");
             $rs = self::$Order->update($_POST['id'], $params);
 
-           
-
             if ($rs) {
+            self::$Order->setTable("stock");
+            $product = self::$Order->findStock($_POST['product_id']);
+            $params =[
+                'qte' => $product->qte - $_POST['quantity'],
+            ];
+            self::$Order->update($product->id, $params);
                 return 1;
             } else {
                 return 0;
@@ -375,9 +311,9 @@ class  SaleController extends Controller
 
     public function LoadElementEdit()
     {
-        $result = self::$Order->loadEditItem([$_POST['ITEM_ID'],$this->INVOIC_ID()]);
+        self::$Order->setTable("sale_order_details");
+        $result = self::$Order->find($_POST['ITEM_ID']);
         $re = json_encode($result, JSON_PRETTY_PRINT);
-
         return $re;
     }
 
@@ -425,19 +361,35 @@ class  SaleController extends Controller
     public function printBill()
     {
         $id = isset($_GET['id']) ? intval($_GET['id']) : 0 ;
-        self::$Bransh->setTable("BRANSH");
-        $Bransh = self::$Bransh->find(App::$BranshID);
+        $sale_order = self::$Order->load("AND sale_order.id = {$id}");
+    $sale_order_details = self::$Order->loadItem("AND sale_order_id = {$id}");
+        // self::$Order->load()[0]
 
-        $invoic = self::$Order->findInvo($id);
-        $details = self::$Order->loadItem(" AND INVOIC_DETIALS.INVO_ID = {$id} ");
+        var_dump(self::$Order->LastItem()->sale_order_id);
 
-        $this->renderBill('print/invoic',compact('Bransh','invoic','details'));
+        // $this->renderBill('print/invoic',compact('Bransh','invoic','details'));
     }
 
     public function delete()
     {
-        self::$Order->setTable("INSURANCECOMM");
+        
         if (isset($_POST['id'])) {
+            $order_details = self::$Order->loadItem("AND sale_order_id = {$_POST['id']}");
+            foreach($order_details as $order){
+                // update the stock qte .
+                self::$Order->setTable("stock");
+                $product = self::$Order->findStock($order->product_id);
+                $params =[
+                    'qte' => $product->qte + $order->quantity,
+                ];
+                self::$Order->update($product->id, $params);
+
+                // then delete the sale order detils (^_^)
+                self::$Order->setTable("sale_order_details");
+                $re = self::$Order->delete($order->id);
+            }
+            // at last delete the sale order data .
+            self::$Order->setTable("sale_order");
             $re = self::$Order->delete($_POST['id']);
             if($re)
             {
@@ -454,18 +406,19 @@ class  SaleController extends Controller
     {
         if (!empty($_POST) ) {
 
+            // delete trik (-_-) <div class=""></div>
+            self::$Order->setTable("sale_order_details");
+            $result = self::$Order->find($_POST['ITEM_ID']);
 
-            if (self::$Order->TestInsuranceStatus([$_POST['ITEM_ID'],$this->INVOIC_ID()])){
-                $where = " WHERE ITEM_ID = {$_POST['ITEM_ID']}";
-                $where .= " AND INVO_ID = {$this->INVOIC_ID()}";
-                self::$Order->setTable("DELAY_COMPANY");
-                self::$Order->deleteItem($where);
-            }
+            self::$Order->setTable("stock");
+            $product = self::$Order->findStock($result->product_id);
+            $params =[
+                'qte' => $product->qte + $result->quantity,
+            ];
+            self::$Order->update($product->id, $params);
 
-            $where = " WHERE ITEM_ID = {$_POST['ITEM_ID']}";
-            $where .= " AND INVO_ID = {$this->INVOIC_ID()}";
-            self::$Order->setTable("INVOIC_DETIALS");
-            $rs = self::$Order->deleteItem($where);
+            self::$Order->setTable("sale_order_details");
+            $rs = self::$Order->delete($_POST['ITEM_ID']);
 
             if ($rs){
                 return 1;
@@ -478,13 +431,7 @@ class  SaleController extends Controller
 
     public function printlist()
     {
-        $filter = '';
-        if (isset($_SESSION['filter']))
-        {
-            $filter = $_SESSION['filter'];
-        }
-
-        $stmt = self::$Order->load($filter);
-        $this->pdf('emp/printlist',compact('emps'));
+        $vendors = self::$Order->load($filter);
+        $this->pdf('vendor/printlist',compact('vendors'));
     }
 }

@@ -5,27 +5,27 @@ class StockModel extends Model
 {
     function __construct()
     {
-        $this->setTable("stockroom");
+        $this->setTable("stock");
     }
 
     public function load( $filter = null )
     {
-        return $this->query("SELECT 
-                                        stockroom.*
-                                      FROM 
-                                stockroom
-                            WHERE  1=1
+        return $this->query("SELECT stock.*,product.product_name,product.sale_price,product.purchase_price,category.cat_name
+                            FROM `stock` 
+                            INNER JOIN product ON product.id = stock.product_id
+                            INNER JOIN category ON category.id = product.category_id
+                            WHERE 1
                             ".$filter."
                 ");
     }
 
-    public function profile( $id )
+    public function show( $id )
     {
         return $this->query("SELECT 
-                                        stockroom.*
+                                        stock.*
                                       FROM 
-                                emp 
-                            WHERE emp.id = ?
+                                      stock 
+                            WHERE stock.id = ?
                             
                 ", [$id] , true);
     }
@@ -53,10 +53,5 @@ class StockModel extends Model
             return false;
         }
 
-    }
-
-    public function show($id)
-    {
-        
     }
 }

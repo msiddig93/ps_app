@@ -139,13 +139,7 @@ class CategoryController extends Controller
 
     public function printlist()
     {
-        $filter = '';
-        if (isset($_SESSION['filter']))
-        {
-            $filter = $_SESSION['filter'];
-        }
-
-        $categorys = self::$Emp->load($filter);
-        $this->pdf('category/printlist',compact('categorys'));
+        $categories = self::$Emp->load();
+        $this->pdf('stock/printCategoryList',compact('categories'));
     }
 }

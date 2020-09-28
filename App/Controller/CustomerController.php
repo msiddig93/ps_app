@@ -64,65 +64,7 @@ class CustomerController extends Controller
         self::$Emp->setTable("customer");
         return self::$Emp->NextID();
     }
-
-    public function search()
-    {
-        $filter = '';
-        
-        if (isset($_POST['FULLNAME']) && !customerty($_POST['FULLNAME'])) {
-            $filter .= " AND FULLNAME LIKE '%{$_POST['FULLNAME']}%' ";
-        }
-
-        if (isset($_POST['TYPE']) && !customerty($_POST['TYPE'])) {
-            $filter .= "AND TYPE LIKE '%{$_POST['TYPE']}%' ";
-        }
-
-        $_SESSION['search-customer'] = $filter;
-
-        self::$Emp->setTable("customer");
-        $customers = self::$Emp->load($filter);
-        $re = "";
-        foreach($customers as $customer):
-            if ( $customer->ID > 0    ) {
-                $re.="<tr>
-                        <td>
-                            <a href='#'>
-                                <img class='media-object avatar' src='". App::$path ."img/customer/". $customer->AVATAR ."'>
-                            </a>
-                        </td>
-                        <td>
-                            <h4>
-                                <a href='#'>
-                                    ". $customer->FULLNAME ."
-                                </a>
-                            </h4>
-                            <p>إسم المستخدم : ". $customer->LOGIN ."@</p>
-                        </td>
-                        <td>
-                            <p>العنوان : ". $customer->ADDRSS ."</p>
-                        </td>
-                        <td>
-                            <p style='direction: ltr'> الهاتف : ". $customer->PHONE ."</p>
-                            <p>". $customer->TYPE ."</p>
-                        </td>
-                        <td class='table-actions'>
-                            <a class='btn btn-success btn-xs'
-                               element_id='". $customer->ID ."'
-                               onclick='EditElement(this,event)'
-                               title='تعديل'><i class='fa fa-pencil-square'></i></a>
-                            <a class='btn btn-danger btn-xs'
-                               element_id='". $customer->ID ."'
-                               title='حذف'
-                               onclick='DeleteElement(this ,event);' >
-                                <i class='fa fa-trash-o'></i></a>
-                        </td>
-                    </tr>";
-            }
-
-        endforeach;
-        return $re;
-    }
-
+    
     public function add()
     {
         self::$Emp->setTable("customer");
@@ -271,13 +213,7 @@ class CustomerController extends Controller
 
     public function printlist()
     {
-        $filter = '';
-        if (isset($_SESSION['filter']))
-        {
-            $filter = $_SESSION['filter'];
-        }
-
-        $customers = self::$Emp->load($filter);
+        $customers = self::$Emp->load();
         $this->pdf('customer/printlist',compact('customers'));
     }
 }

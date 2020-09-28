@@ -1,5 +1,5 @@
 <section class="content-header">
-    <span class="content-title"> <i class="fa fa-shopping-cart"></i> <a href="<?= App::$path ?>stock">المنتجات</a> <i class="fa fa-chevron-left"></i> <h3>أوامر الشراء</h3> </span>
+    <span class="content-title"> <i class="fa fa-shopping-cart"></i> <a href="<?= App::$path ?>stock">المخزون</a> <i class="fa fa-chevron-left"></i> <h3>المنتجات</h3> </span>
     <ul class="header-btns">
         <li>
             <a id="add-element" class="btn btn-success">
@@ -13,13 +13,7 @@
             </a>
         </li>
         <li>
-            <a href="" class="btn btn-info" onclick="searchToggle('form-search-wrap',event);">
-                <i class="fa fa-search"></i>
-                <span class="hidden-xs hidden-sm">بحث</span>
-            </a>
-        </li>
-        <li>
-            <a href="<?= App::$path ?>emp/printlist" target="_blank" class="btn btn-default">
+            <a href="<?= App::$path ?>product/printlist" target="_blank" class="btn btn-default">
                 <i class="fa fa-print"></i>
                 <span class="hidden-xs hidden-sm">طباعة</span>
             </a>

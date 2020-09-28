@@ -8,13 +8,7 @@
             </a>
         </li>
         <li>
-            <a href="" class="btn btn-info" onclick="searchToggle('form-search-wrap',event);">
-                <i class="fa fa-search"></i>
-                <span class="hidden-xs hidden-sm">بحث</span>
-            </a>
-        </li>
-        <li>
-            <a href="<?= App::$path ?>emp/printlist" target="_blank" class="btn btn-default">
+            <a href="<?= App::$path ?>stock/printlist" target="_blank" class="btn btn-default">
                 <i class="fa fa-print"></i>
                 <span class="hidden-xs hidden-sm">طباعة</span>
             </a>
@@ -98,13 +92,12 @@
             <table class="table main-table rtl_table data-table table-striped table-hover">
                 <thead>
                 <tr>
-                    <th>&nbsp;</th>
                     <th >الرقم</th>
-                    <th >إسم المورد</th>
-                    <th >العنوان</th>
-                    <th >الهاتف</th>
-                    <th >البريد الالكتروني</th>
-                    <th>&nbsp;</th>
+                    <th >إسم المنتج</th>
+                    <th >الصنف</th>
+                    <th >سعر الشراء</th>
+                    <th >سعر البيع</th>
+                    <th >الكمية المتوفرة</th>
                 </tr>
                 </thead>
                 <tbody>
