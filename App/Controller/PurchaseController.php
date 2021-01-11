@@ -74,7 +74,7 @@ class  PurchaseController extends Controller
                         </td>
                         <td class='table-actions'>
                             <a class='btn btn-default'
-                               href='".App::$path."sales/printBill/". $result->id ."'
+                               href='".App::$path."purchase/printBill/". $result->id ."'
                                target='_blank'
                                title='طباعة'><i class='fa fa-print'></i>
                             </a> 
@@ -82,12 +82,7 @@ class  PurchaseController extends Controller
                                 element_id='". $result->id ."'
                                 onclick='DeleteOrder(this ,event);'
                                 title='حذف'><i class='fa fa-ban'></i>
-                            </a> 
-                            <a class='btn btn-primary'
-                                href='".App::$path."sales/printBill/". $result->id ."'
-                                target='_blank'
-                                title='التفاصيل'><i class='fa fa-info-circle'></i>
-                            </a> 
+                            </a>
                         </td>
                     </tr>";
                     $number++;
@@ -152,69 +147,6 @@ class  PurchaseController extends Controller
         return self::$Order->NextID();
     }
 
-    public function search()
-    {
-        $filter = '';
-
-        if (isset($_POST['FULLNAME']) && !empty($_POST['FULLNAME'])) {
-            $filter .= " AND FULLNAME LIKE '%{$_POST['FULLNAME']}%' ";
-        }
-
-        if (isset($_POST['TYPE']) && !empty($_POST['TYPE'])) {
-            $filter .= "AND TYPE LIKE '%{$_POST['TYPE']}%' ";
-        }
-
-        if (isset($_POST['BRANSH_ID']) && !empty($_POST['BRANSH_ID'])) {
-            $filter .= "AND BRANSH_ID LIKE '%{$_POST['BRANSH_ID']}%' ";
-        }
-
-        $_SESSION['search-emp'] = $filter;
-
-        self::$Order->setTable("INSURANCECOMM");
-        $stmt = self::$Order->load($filter);
-        $re = "";
-        foreach($stmt as $result):
-            if ( $result->ID > 0    ) {
-                $re.="<tr>
-                        <td>
-                            <a href='#'>
-                                <img class='media-object avatar' src='". App::$path ."img/emp/". $result->AVATAR ."'>
-                            </a>
-                        </td>
-                        <td>
-                            <h4>
-                                <a href='#'>
-                                    ". $result->FULLNAME ."
-                                </a>
-                            </h4>
-                            <p>إسم المستخدم : ". $result->LOGIN ."@</p>
-                        </td>
-                        <td>
-                            <p>العنوان : ". $result->ADDRSS ."</p>
-                            <p> الفرع : ". $result->NAME ."#  </p>
-                        </td>
-                        <td>
-                            <p style='direction: ltr'> الهاتف : ". $result->PHONE ."</p>
-                            <p>". $result->TYPE ."</p>
-                        </td>
-                        <td class='table-actions'>
-                            <a class='btn btn-success btn-xs'
-                               element_id='". $result->ID ."'
-                               onclick='EditElement(this,event)'
-                               title='تعديل'><i class='fa fa-pencil-square'></i></a>
-                            <a class='btn btn-danger btn-xs'
-                               element_id='". $result->ID ."'
-                               title='حذف'
-                               onclick='DeleteElement(this ,event);' >
-                                <i class='fa fa-trash-o'></i></a>
-                        </td>
-                    </tr>";
-            }
-
-        endforeach;
-        return $re;
-    }
-
     public function add()
     {
         if (!empty($_POST) ) {
@@ -260,7 +192,7 @@ class  PurchaseController extends Controller
                 'id' => null,
                 'total_price' => $_POST['total_price'],
                 'vendor_id' => $_POST['vendor_id'],
-                'order_date' => date("Y-m-s H:i:s"),
+                'order_date' => date('Y-m-d H:m:i'),
                 'created_by' => $_SESSION['emp']->ID,
             ];
 
@@ -298,7 +230,7 @@ class  PurchaseController extends Controller
             $rs = self::$Order->create($params);
 
             if ($rs) {
-                self::$Order->setTable("stock");
+                self::$Order->setTable("stockroom");
                 $product = self::$Order->find($_POST['product_id']);
                 
                 if(!empty($product)){
@@ -310,7 +242,10 @@ class  PurchaseController extends Controller
                     $params =[
                         'id' => null,
                         'product_id' => $_POST['product_id'],
+                        'sale_price' => $_POST['price'],
+                        'purchase_price' => $_POST['price'],
                         'qte' => $_POST['quantity'],
+                        'created_at ' => date('Y-m-d H:m:i'),
                     ];
                     
                     self::$Order->create($params);
@@ -425,18 +360,6 @@ class  PurchaseController extends Controller
         $this->render('emp/profile',compact('profile'));
     }
 
-    public function printBill()
-    {
-        $id = isset($_GET['id']) ? intval($_GET['id']) : 0 ;
-        self::$Bransh->setTable("BRANSH");
-        $Bransh = self::$Bransh->find(App::$BranshID);
-
-        $invoic = self::$Order->findInvo($id);
-        $details = self::$Order->loadItem(" AND INVOIC_DETIALS.INVO_ID = {$id} ");
-
-        $this->renderBill('print/invoic',compact('Bransh','invoic','details'));
-    }
-
     public function delete()
     {
         
@@ -491,5 +414,22 @@ class  PurchaseController extends Controller
 
         $stmt = self::$Order->load($filter);
         $this->pdf('emp/printlist',compact('emps'));
+    }
+
+    public function printBill()
+    {
+        self::$Order->setTable("purchase_order ");
+        $sale_order = self::$Order->find($_GET['id']);
+
+        self::$Order->setTable("vendor");
+        $customer = self::$Order->find($sale_order->vendor_id);
+
+        self::$Order->setTable("emp");
+        $emp = self::$Order->find($sale_order->created_by);
+
+        $order_details = self::$Order->loadItem(" AND purchase_order_details.purchase_order_id = ".$sale_order->id);
+        
+        $sales = self::$Order->load();
+        $this->renderBill('purchase/printbill',compact('sale_order','customer','emp','order_details'));
     }
 }

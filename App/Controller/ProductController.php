@@ -160,7 +160,7 @@ class ProductController extends Controller
                     Upload::one(
                             $_FILES['avatar'],
                             $avatar,
-                            ROOT.'/public/img/product/'
+                            ROOT.'/Public/img/product/'
                         );
 
                 }
@@ -206,7 +206,7 @@ class ProductController extends Controller
                     Upload::one(
                         $_FILES['avatar'],
                         $avatar,
-                        ROOT.'/public/img/product/'
+                        ROOT.'/Public/img/product/'
                     );
 
                 }

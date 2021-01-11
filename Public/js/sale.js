@@ -404,7 +404,9 @@ function AddElement() {
     var obj = {
         ajax_action: 'sale.add',
         customer_id: $("#customer_id").val(),
+        order_date: $("#order_date").val(),
         total_price: $("#TOTAL_AMOUNT").val(),
+
     };
 
 

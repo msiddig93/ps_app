@@ -99,7 +99,7 @@ class CustomerController extends Controller
                     Upload::one(
                             $_FILES['avatar'],
                             $avatar,
-                            ROOT.'/public/img/customer/'
+                            ROOT.'/Public/img/customer/'
                         );
 
                 }
@@ -143,7 +143,7 @@ class CustomerController extends Controller
                     Upload::one(
                         $_FILES['avatar'],
                         $avatar,
-                        ROOT.'/public/img/customer/'
+                        ROOT.'/Public/img/customer/'
                     );
 
                 }

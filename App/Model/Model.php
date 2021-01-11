@@ -76,9 +76,9 @@ class Model
     public function extractStock($key ,$value , $filter = "" )
     {
         $records = $this->query("
-                SELECT product.id,product.product_name,stock.qte 
-                FROM `stock`
-                INNER JOIN product ON product.id = stock.product_id
+                SELECT product.id,product.product_name,stockroom.qte 
+                FROM `stockroom`
+                INNER JOIN product ON product.id = stockroom.product_id
                 WHERE 1
                 ");
         $array = [];
@@ -143,7 +143,7 @@ class Model
 
     public function findStock($id)
     {
-        return $this->query("SELECT * FROM stock WHERE product_id = ? ",[$id] , true);
+        return $this->query("SELECT * FROM stockroom WHERE product_id = ? ",[$id] , true);
     }
 
     public function find($id)

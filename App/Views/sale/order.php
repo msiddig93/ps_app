@@ -8,13 +8,7 @@
             </a>
         </li>
         <li>
-            <a href="" class="btn btn-info" onclick="searchToggle('form-search-wrap',event);">
-                <i class="fa fa-search"></i>
-                <span class="hidden-xs hidden-sm">بحث</span>
-            </a>
-        </li>
-        <li>
-            <a href="<?= App::$path ?>emp/printlist" target="_blank" class="btn btn-default">
+            <a href="<?= App::$path ?>sale/printlist" target="_blank" class="btn btn-default">
                 <i class="fa fa-print"></i>
                 <span class="hidden-xs hidden-sm">طباعة</span>
             </a>
@@ -139,7 +133,7 @@
                 <section class="">
                     <form method="post" enctype="multipart/form-data" id="form-save-element">
                         <div class="col-sm-4 col-xs-12" >
-                            <section ="" class="content-header box-info-header">
+                            <section  class="content-header box-info-header">
                                 <span class="content-title"> <i class="fa fa-info-circle"></i> أمر البيع</span>
                             </section>
                             <br>
@@ -153,6 +147,8 @@
                                 "data-validation-length" => "1-255",
                                 "data-validation-error-msg" => "عزراً ... لايمكن ترك الاسم الكامل فارغ !"
                             ]) ?>
+
+                            <input style="display: none" type="date" id="order_date" name="order_date" value="<?= date("Y-m-d") ?>" class="form-control" >
 
                             <?= $form->select("customer_id","العميل",$customers,[
                                 "id" => "customer_id",

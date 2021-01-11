@@ -154,7 +154,7 @@ class VendorController extends Controller
                     Upload::one(
                             $_FILES['avatar'],
                             $avatar,
-                            ROOT.'/public/img/vendor/'
+                            ROOT.'/Public/img/vendor/'
                         );
 
                 }
@@ -198,7 +198,7 @@ class VendorController extends Controller
                     Upload::one(
                         $_FILES['avatar'],
                         $avatar,
-                        ROOT.'/public/img/vendor/'
+                        ROOT.'/Public/img/vendor/'
                     );
 
                 }

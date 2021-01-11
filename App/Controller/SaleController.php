@@ -82,13 +82,7 @@ class  SaleController extends Controller
                                 element_id='". $result->id ."'
                                 onclick='DeleteOrder(this ,event);'
                                 title='حذف'><i class='fa fa-ban'></i>
-                            </a> 
-                            <a class='btn btn-primary'
-                                href='#'
-                                element_id='". $result->id ."'
-                                onclick='ShowOrderDetails(this,event)'
-                                title='التفاصيل'><i class='fa fa-info-circle'></i>
-                            </a> 
+                            </a>
                         </td>
                     </tr>";
                     $number++;
@@ -162,14 +156,12 @@ class  SaleController extends Controller
     {
         if (!empty($_POST) ) {
             $stmt = self::$Order->loadItem(" AND sale_order_details.sale_order_id = ".$this->INVOIC_ID());
-
-
-
+        
             $params = [
                 'id' => null,
-                'customer_id' => $_POST['customer_id'],
-                'order_date' => date("Y-m-s H:i:s"),
                 'total_price' => $_POST['total_price'],
+                'customer_id' => $_POST['customer_id'],
+                'order_date' => $_POST['order_date'],
                 'created_by' => $_SESSION['emp']->ID,
             ];
 
@@ -224,12 +216,28 @@ class  SaleController extends Controller
             self::$Order->setTable("sale_order_details");
             $rs = self::$Order->create($params);
             if ($rs) {
-                self::$Order->setTable("stock");
-                $product = self::$Order->findStock($_POST['product_id']);
-                $params =[
-                    'qte' => $product->qte - $_POST['quantity'],
-                ];
-                self::$Order->update($product->id, $params);
+                self::$Order->setTable("stockroom");
+                $product = self::$Order->find($_POST['product_id']);
+                
+                if(!empty($product)){
+                    $params =[
+                        'qte' => $product->qte + $_POST['quantity'],
+                    ];
+                    self::$Order->update($product->id, $params);                    
+                }else{
+                    $params =[
+                        'id' => null,
+                        'product_id' => $_POST['product_id'],
+                        'sale_price' => $_POST['price'],
+                        'purchase_price' => $_POST['price'],
+                        'qte' => $_POST['quantity'],
+                        'created_at ' => date('Y-m-d H:m:i'),
+                    ];
+                    
+                    self::$Order->create($params);
+                }
+
+                
                 return 1;
             } else {
                 return 0;
@@ -358,18 +366,6 @@ class  SaleController extends Controller
         $this->render('emp/profile',compact('profile'));
     }
 
-    public function printBill()
-    {
-        $id = isset($_GET['id']) ? intval($_GET['id']) : 0 ;
-        $sale_order = self::$Order->load("AND sale_order.id = {$id}");
-    $sale_order_details = self::$Order->loadItem("AND sale_order_id = {$id}");
-        // self::$Order->load()[0]
-
-        var_dump(self::$Order->LastItem()->sale_order_id);
-
-        // $this->renderBill('print/invoic',compact('Bransh','invoic','details'));
-    }
-
     public function delete()
     {
         
@@ -431,7 +427,24 @@ class  SaleController extends Controller
 
     public function printlist()
     {
-        $vendors = self::$Order->load($filter);
-        $this->pdf('vendor/printlist',compact('vendors'));
+        $sales = self::$Order->load();
+        $this->pdf('sale/printlist',compact('sales'));
+    }
+
+    public function printBill()
+    {
+        self::$Order->setTable("sale_order");
+        $sale_order = self::$Order->find($_GET['id']);
+
+        self::$Order->setTable("customer");
+        $customer = self::$Order->find($sale_order->customer_id);
+
+        self::$Order->setTable("emp");
+        $emp = self::$Order->find($sale_order->created_by);
+
+        $order_details = self::$Order->loadItem(" AND sale_order_details.sale_order_id = ".$sale_order->id);
+        
+        $sales = self::$Order->load();
+        $this->renderBill('sale/printbill',compact('sale_order','customer','emp','order_details'));
     }
 }

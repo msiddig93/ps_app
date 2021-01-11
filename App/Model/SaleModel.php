@@ -114,11 +114,11 @@ class SaleModel extends Model
                                         MAX(UNIT) as UNIT,
                                         ITEMS.COMMERCAL_NAME
                                       FROM 
-                                STOCK
+                                stockroom
                                 INNER JOIN ITEMS
-                                ON ITEMS.ID = STOCK.ITEM_ID
+                                ON ITEMS.ID = stockroom.ITEM_ID
                                 WHERE  ITEMS.ID = ?
-                                AND STOCK.BRANSH_ID = ?
+                                AND stockroom.BRANSH_ID = ?
                                 GROUP BY ITEMS.COMMERCAL_NAME
                                 ORDER BY ID DESC
                 ",$id ,true);
