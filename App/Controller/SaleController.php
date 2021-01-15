@@ -217,7 +217,7 @@ class  SaleController extends Controller
             $rs = self::$Order->create($params);
             if ($rs) {
                 self::$Order->setTable("stockroom");
-                $product = self::$Order->find($_POST['product_id']);
+                $product = self::$Order->findStock($_POST['product_id']);
                 
                 if(!empty($product)){
                     $params =[

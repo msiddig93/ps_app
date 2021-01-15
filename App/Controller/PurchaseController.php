@@ -231,11 +231,12 @@ class  PurchaseController extends Controller
 
             if ($rs) {
                 self::$Order->setTable("stockroom");
-                $product = self::$Order->find($_POST['product_id']);
-                
+                $product = self::$Order->findStock($_POST['product_id']);
                 if(!empty($product)){
                     $params =[
                         'qte' => $product->qte + $_POST['quantity'],
+                        'sale_price' => $_POST['price'],
+                        'purchase_price' => $_POST['price'] + 100,
                     ];
                     self::$Order->update($product->id, $params);                    
                 }else{
@@ -243,7 +244,7 @@ class  PurchaseController extends Controller
                         'id' => null,
                         'product_id' => $_POST['product_id'],
                         'sale_price' => $_POST['price'],
-                        'purchase_price' => $_POST['price'],
+                        'purchase_price' => $_POST['price'] + 100,
                         'qte' => $_POST['quantity'],
                         'created_at ' => date('Y-m-d H:m:i'),
                     ];

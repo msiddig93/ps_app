@@ -143,13 +143,13 @@
                 </a>
             </li>
 
-            <li class="nav-item  bransh">
+            <!-- <li class="nav-item  bransh">
                 <a href="<?= App::$path ?>bransh" class="nav-link  nav-toggle">
                     <i class="fa  fa-balance-scale"></i>
                     <span class="title">الحسابات</span>
                     <span class="arrow"></span>
                 </a>
-            </li>
+            </li> -->
 
         
     </ul>

@@ -10,48 +10,13 @@ class StockModel extends Model
 
     public function load( $filter = null )
     {
-        return $this->query("SELECT stockroom.*,product.product_name,product.sale_price,product.purchase_price,category.cat_name
+        return $this->query("SELECT stockroom.product_id, (stockroom.sale_price) as sale_price, stockroom.purchase_price, stockroom.created_at, (stockroom.qte) as qte,product.product_name,product.sale_price,product.purchase_price,category.cat_name
                             FROM `stockroom` 
                             INNER JOIN product ON product.id = stockroom.product_id
                             INNER JOIN category ON category.id = product.category_id
                             WHERE 1
                             ".$filter."
+                            GROUP BY stockroom.product_id
                 ");
-    }
-
-    public function show( $id )
-    {
-        return $this->query("SELECT 
-                                        stockroom.*
-                                      FROM 
-                                      stockroom 
-                            WHERE stockroom.id = ?
-                            
-                ", [$id] , true);
-    }
-
-    public function login($login , $pass)
-    {
-        $emp = $this->query("SELECT 
-                                            emp.*
-                                             
-                                      FROM emp
-                                      WHERE login = ?
-                                      "
-                                ,[$login]
-                                ,true
-        );
-
-        if ($emp)
-        {
-            if ($emp->PASS == sha1($pass)){
-                $_SESSION['emp'] = $emp;
-                setcookie("pharmacy_app_emp_id",$emp->id, time() + 3600 ,"/");
-                return true;
-            }
-        }else{
-            return false;
-        }
-
     }
 }
